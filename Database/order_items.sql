@@ -10,12 +10,3 @@ CREATE TABLE order_items(
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
 )
-
-SET SQL_SAFE_UPDATES = 0;
-
-
-SELECT * FROM cart;
-SELECT * FROM users;
-SELECT * FROM products;
-SELECT * FROM orders;
-SELECT * FROM order_items;
