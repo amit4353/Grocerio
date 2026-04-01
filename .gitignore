@@ -1,0 +1,17 @@
+# Mac system files
+.DS_Store
+
+# Node.js / npm
+node_modules/
+npm-debug.log
+
+# Environment / secret keys
+.env
+.env.local
+
+# VS Code settings
+.vscode/
+
+# Build output
+dist/
+build/
