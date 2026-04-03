@@ -115,7 +115,6 @@ exports.updateProduct = (req, res) => {
 
 exports.deleteProduct = (req, res) => {
     const { id } = req.params;
-    console.log("Deleting product ID:", req.params.id);
 
     db.query("SELECT * FROM products WHERE id=?", [id], (err, product) => {
         if(err){
