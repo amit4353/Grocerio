@@ -70,7 +70,11 @@ const Navbar = ({ cartItemCount = 0 }) => {
         <div className="flex items-center justify-between h-20">
           {/* Left: Logo */}
           <div className="flex-shrink-0">
-            <Link onClick={() => window.location.reload()} to="/" className="text-2xl font-bold bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent">
+            <Link to="/" onClick={() => {
+              navigate("/")
+              window.scrollTo(0, 0);
+
+            }}   className="text-2xl font-bold bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent">
               Grocerio
             </Link>
           </div>

@@ -22,7 +22,6 @@ const ProductDetails = ({ loadCart }) => {
       const res = await getProductById(id);
       setProduct(res);
     } catch (err) {
-      console.log('err', err);
       toast.error(err.response?.data?.message || 'Something went wrong');
     } finally {
       setLoading(false);

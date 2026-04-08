@@ -26,7 +26,6 @@ const Login = () => {
         password,
       });
 
-      // console.log(res.message);
 
       localStorage.setItem('token', res.token);
       login(res.user);
@@ -34,8 +33,6 @@ const Login = () => {
       toast.success(res.message, {
         duration: 1500,
       });
-      
-      // console.log("res.user.isAdmin",res.user.isAdmin);
 
       if(res.user.isAdmin){
         navigate("/admin");

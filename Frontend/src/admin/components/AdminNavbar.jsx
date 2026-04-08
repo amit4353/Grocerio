@@ -36,7 +36,6 @@ const AdminNavbar = ({ toggleSidebar, isDesktop }) => {
 const handleLogout = async () => {
     try{
         const res = await logoutUser()
-        console.log(res);
         toast.success(res?.message);
         navigate('/users/login');
 

@@ -12,7 +12,6 @@ export const deleteUser = async () => {
 
 export const getUserProfile = async () => {
     const res = await protectedAPI.get("/users/profile");
-    console.log("res", res);
     return res.data;
 }
 

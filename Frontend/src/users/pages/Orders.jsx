@@ -13,7 +13,7 @@ const Orders = () => {
 
   useEffect(() => {
     fetchOrders();
-
+    window.scrollTo(0, 0);
   }, []);
 
   const fetchOrders = async () => {
@@ -21,7 +21,6 @@ const Orders = () => {
     try {
       const response = await getUserOrders();
       const rows = response.data;
-      console.log(rows)
       const ordersMap = new Map();
       rows.forEach((row) => {
         if (!ordersMap.has(row.order_id)) {
