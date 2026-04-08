@@ -1,4 +1,5 @@
 const db = require("../config/db.js");
+const claudinary = require("../config/cloudinary.js");
 
 
 exports.getProducts = (req,res) => {
@@ -53,13 +54,19 @@ exports.createProduct = (req, res) => {
             });
         };
 
+        if(!name || !brand || !price || !image || !description){
+            return res.status(400).json({
+                message : "All fields are required"
+            });
+        };
+
         const sql = "INSERT INTO products (name, brand, price, image, description, stock) VALUE (?,?,?,?,?,?)";
 
         db.query(sql,[name, brand, price, image, description, stock || 0], (err, result) => {
             if(err){
                 return res.status(500).json(err);
             }
-
+            
             res.status(201).json({
                 message : "Product Created successfully",
                 productId : result.insertId,
