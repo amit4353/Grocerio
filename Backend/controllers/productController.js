@@ -46,27 +46,30 @@ exports.getProductsById = (req,res) => {
 
 exports.createProduct = (req, res) => {
     try {
-        const {name, brand, price, image, description, stock} = req.body;
+        
+        if(!req.file){
+            return res.status(400).json({
+                message : "Image is required"
+            })
+        }
+        
+        const {name, brand, price, description, stock} = req.body;
+        const image = req.file.path;
+        const claudinary_id = req.file.filename
 
+        
         if(!name || !brand || !price || !image || !description){
             return res.status(400).json({
                 message : "All fields are required"
             });
         };
 
-        if(!name || !brand || !price || !image || !description){
-            return res.status(400).json({
-                message : "All fields are required"
-            });
-        };
+        const sql = "INSERT INTO products (name, brand, price, image, description, claudinary_id, stock) VALUE (?,?,?,?,?,?,?)";
 
-        const sql = "INSERT INTO products (name, brand, price, image, description, stock) VALUE (?,?,?,?,?,?)";
-
-        db.query(sql,[name, brand, price, image, description, stock || 0], (err, result) => {
+        db.query(sql,[name, brand, price, image, description, claudinary_id, stock || 0], (err, result) => {
             if(err){
                 return res.status(500).json(err);
             }
-            
             res.status(201).json({
                 message : "Product Created successfully",
                 productId : result.insertId,
@@ -84,7 +87,7 @@ exports.createProduct = (req, res) => {
 exports.updateProduct = (req, res) => {
     const { id } = req.params;
 
-    db.query("SELECT * FROM products WHERE id=?", [id], (err, product) => {
+    db.query("SELECT * FROM products WHERE id=?", [id], async (err, product) => {
 
         if(err) return res.status(404).json(err);
 
@@ -94,7 +97,19 @@ exports.updateProduct = (req, res) => {
             });
         };
 
-        const {name , brand, price, image, description, stock } = req.body;
+        let image =  product[0].image;
+        let claudinary_id = product[0].claudinary_id;
+
+        if(req.file){
+            if(claudinary_id){
+                await claudinary.uploader.destroye(claudinary_id); 
+            }
+
+            image = req.file.path;
+            claudinary_id = req.file.filename;
+        }
+
+        const {name , brand, price, description, stock } = req.body;
         
         const sql = "UPDATE products SET name = COALESCE(?, name), brand = COALESCE(?, brand), price = COALESCE(?, price), image = COALESCE(?, image), description = COALESCE(?, description), stock = COALESCE(?, stock) WHERE id=?";
         
