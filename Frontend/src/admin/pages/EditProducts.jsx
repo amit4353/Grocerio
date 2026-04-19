@@ -12,11 +12,12 @@ const EditProduct = () => {
     name: '',
     brand: '',
     price: '',
-    image: '',
     description: '',
     stock: '',
   });
+  const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
+  const [existingImage, setExistingImage] = useState('');
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -31,10 +32,10 @@ const EditProduct = () => {
         name: product.name || '',
         brand: product.brand || '',
         price: product.price?.toString() || '',
-        image: product.image || '',
         description: product.description || '',
         stock: product.stock?.toString() || '',
       });
+      setExistingImage(product.image || '');
       setImagePreview(product.image || '');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to load product');
@@ -47,7 +48,30 @@ const EditProduct = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (name === 'image') setImagePreview(value);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      setImageFile(null);
+      setImagePreview(existingImage);
+      return;
+    }
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Only JPEG, PNG, and WEBP images are allowed');
+      e.target.value = '';
+      return;
+    }
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size should be less than 5MB');
+      e.target.value = '';
+      return;
+    }
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e) => {
@@ -67,14 +91,18 @@ const EditProduct = () => {
 
     setUpdating(true);
     try {
-      const payload = {
-        name: formData.name,
-        brand: formData.brand,
-        price: parseFloat(formData.price),
-        image: formData.image,
-        description: formData.description,
-        stock: parseInt(formData.stock),
-      };
+      const payload = new FormData();
+      payload.append('name', formData.name);
+      payload.append('brand', formData.brand);
+      payload.append('price', parseFloat(formData.price));
+      payload.append('description', formData.description);
+      payload.append('stock', parseInt(formData.stock));
+      if (imageFile) {
+        payload.append('image', imageFile);
+      } else {
+        // If no new image selected, send the existing image URL to keep it unchanged
+        payload.append('existingImage', existingImage);
+      }
       await updateProduct(id, payload);
       toast.success('Product updated successfully');
       navigate('/products');
@@ -89,6 +117,7 @@ const EditProduct = () => {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary-500 border-r-transparent"></div>
           <p className="mt-4 text-gray-500">Loading product...</p>
         </div>
       </div>
@@ -108,32 +137,31 @@ const EditProduct = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Left column – image preview and upload */}
               <div>
-                <div className="mt-1 flex justify-center  rounded-lg border  border-gray-300 bg-gray-50 overflow-hidden">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Product Image</label>
+                <div className="mt-1 flex justify-center rounded-lg border border-gray-300 bg-gray-50 overflow-hidden">
                   {imagePreview ? (
-                      <img
+                    <img
                       src={imagePreview}
                       alt="Preview"
-                      className="h-72 w-full object-cover rounded-md "
-                      />
-                    ) : (
-                        <div className="text-gray-400 text-sm">No image preview</div>
-                    )}
+                      className="h-72 w-full object-cover rounded-md"
+                    />
+                  ) : (
+                    <div className="text-gray-400 py-33.5 text-center w-full">No image preview</div>
+                  )}
                 </div>
-                <label className="block text-xs font-medium text-gray-400 px-1 mt-4 mb-1">Image URL </label>
                 <input
-                  type="text"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleChange}
-                  placeholder="Image URL"
-                  className=" p-4 outline-none block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/jpg"
+                  onChange={handleFileChange}
+                  className="mt-4 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
                 />
+                <p className="mt-1 text-xs text-gray-400">Leave empty to keep current image. JPEG, PNG, WEBP only. Max 5MB.</p>
               </div>
 
               {/* Right column – form fields */}
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="name" className="block text-xs font-medium text-gray-400 mb-1">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                     Product Name *
                   </label>
                   <input
@@ -142,13 +170,13 @@ const EditProduct = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="mb-5 block w-full p-2 outline-none rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors"
+                    className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors"
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="brand" className="block text-xs font-medium text-gray-400 mb-1">
+                  <label htmlFor="brand" className="block text-sm font-medium text-gray-700 mb-1">
                     Brand
                   </label>
                   <input
@@ -157,13 +185,13 @@ const EditProduct = () => {
                     name="brand"
                     value={formData.brand}
                     onChange={handleChange}
-                    className="mb-5 block w-full p-2 outline-none rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors"
+                    className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="price" className="block text-xs font-medium text-gray-400 mb-1">
+                    <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
                       Price (₹) *
                     </label>
                     <input
@@ -174,12 +202,12 @@ const EditProduct = () => {
                       onChange={handleChange}
                       step="0.01"
                       min="0"
-                      className="mb-6 block w-full outline-none p-2 rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors"
+                      className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors"
                       required
                     />
                   </div>
                   <div>
-                    <label htmlFor="stock" className="block text-xs font-medium text-gray-400 mb-1">
+                    <label htmlFor="stock" className="block text-sm font-medium text-gray-700 mb-1">
                       Stock *
                     </label>
                     <input
@@ -189,14 +217,14 @@ const EditProduct = () => {
                       value={formData.stock}
                       onChange={handleChange}
                       min="0"
-                      className="mb-6 block w-full outline-none rounded-lg p-2 border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors"
+                      className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors"
                       required
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="description" className="block text-xs font-medium text-gray-400 mb-1">
+                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
                     Description
                   </label>
                   <textarea
@@ -205,7 +233,7 @@ const EditProduct = () => {
                     rows="3"
                     value={formData.description}
                     onChange={handleChange}
-                    className="block w-full outline-none p-4 rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors resize-none"
+                    className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors resize-none"
                   />
                 </div>
               </div>

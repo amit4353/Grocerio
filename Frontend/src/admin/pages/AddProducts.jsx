@@ -10,20 +10,49 @@ const AddProduct = () => {
     name: '',
     brand: '',
     price: '',
-    image: '',
     description: '',
     stock: '',
   });
+  const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (name === 'image') setImagePreview(value);
-    // Clear field error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      setImageFile(null);
+      setImagePreview('');
+      return;
+    }
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Only JPEG, PNG, and WEBP images are allowed');
+      setImageFile(null);
+      setImagePreview('');
+      e.target.value = '';
+      return;
+    }
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size should be less than 5MB');
+      setImageFile(null);
+      setImagePreview('');
+      e.target.value = '';
+      return;
+    }
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+    if (errors.image) {
+      setErrors((prev) => ({ ...prev, image: '' }));
     }
   };
 
@@ -34,7 +63,7 @@ const AddProduct = () => {
     if (!formData.price || parseFloat(formData.price) <= 0) {
       newErrors.price = 'Valid price is required';
     }
-    if (!formData.image.trim()) newErrors.image = 'Image URL is required';
+    if (!imageFile) newErrors.image = 'Product image is required';
     if (!formData.description.trim()) newErrors.description = 'Description is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -46,14 +75,14 @@ const AddProduct = () => {
 
     setLoading(true);
     try {
-      const payload = {
-        name: formData.name,
-        brand: formData.brand,
-        price: parseFloat(formData.price),
-        image: formData.image,
-        description: formData.description,
-        stock: formData.stock ? parseInt(formData.stock) : 0,
-      };
+      const payload = new FormData();
+      payload.append('name', formData.name);
+      payload.append('brand', formData.brand);
+      payload.append('price', parseFloat(formData.price));
+      payload.append('description', formData.description);
+      payload.append('stock', formData.stock ? parseInt(formData.stock) : 0);
+      payload.append('image', imageFile); // the file
+
       await createProduct(payload);
       toast.success('Product created successfully');
       navigate('/products');
@@ -67,19 +96,17 @@ const AddProduct = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-semibold text-gray-900">Add Product</h1>
           <p className="mt-1 text-sm text-gray-500">Create a new product for your store</p>
         </div>
 
-        {/* Form Card */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Left column – Image Preview */}
+              {/* Left column – Image Upload & Preview */}
               <div>
-
+                <label className="block text-sm font-medium text-gray-700 mb-1">Product Image *</label>
                 <div className="mt-1 flex justify-center rounded-lg border border-gray-300 bg-gray-50 overflow-hidden">
                   {imagePreview ? (
                     <img
@@ -88,29 +115,27 @@ const AddProduct = () => {
                       className="h-72 w-full object-cover rounded-md"
                     />
                   ) : (
-                    <div className="text-gray-400 py-33.5">Image preview will appear here</div>
+                    <div className="text-gray-400 py-33.5 text-center w-full">Image preview will appear here</div>
                   )}
                 </div>
-                <label className="block text-xs font-medium text-gray-400 px-1 mt-4 mb-1">Image URL </label>
                 <input
-                  type="text"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleChange}
-                  placeholder="Enter image URL"
-                  className={`p-2 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm ${
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/jpg"
+                  onChange={handleFileChange}
+                  className={`mt-4 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 ${
                     errors.image ? 'border-red-500' : ''
                   }`}
                 />
                 {errors.image && (
                   <p className="mt-1 text-xs text-red-600">{errors.image}</p>
                 )}
+                <p className="mt-1 text-xs text-gray-400">JPEG, PNG, WEBP only. Max 5MB.</p>
               </div>
 
               {/* Right column – Form fields */}
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="name" className="block text-xs font-medium text-gray-400 mb-1">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                     Product Name *
                   </label>
                   <input
@@ -119,7 +144,7 @@ const AddProduct = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className={`p-2 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors ${
+                    className={`block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors ${
                       errors.name ? 'border-red-500' : ''
                     }`}
                   />
@@ -127,7 +152,7 @@ const AddProduct = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="brand" className="block text-xs font-medium text-gray-400 mb-1">
+                  <label htmlFor="brand" className="block text-sm font-medium text-gray-700 mb-1">
                     Brand *
                   </label>
                   <input
@@ -136,7 +161,7 @@ const AddProduct = () => {
                     name="brand"
                     value={formData.brand}
                     onChange={handleChange}
-                    className={`p-2 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors ${
+                    className={`block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors ${
                       errors.brand ? 'border-red-500' : ''
                     }`}
                   />
@@ -145,7 +170,7 @@ const AddProduct = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="price" className="block text-xs font-medium text-gray-400 mb-1">
+                    <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
                       Price (₹) *
                     </label>
                     <input
@@ -156,14 +181,14 @@ const AddProduct = () => {
                       onChange={handleChange}
                       step="0.01"
                       min="0"
-                      className={`p-2 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors ${
+                      className={`block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors ${
                         errors.price ? 'border-red-500' : ''
                       }`}
                     />
                     {errors.price && <p className="mt-1 text-xs text-red-600">{errors.price}</p>}
                   </div>
                   <div>
-                    <label htmlFor="stock" className="block text-xs font-medium text-gray-400 mb-1">
+                    <label htmlFor="stock" className="block text-sm font-medium text-gray-700 mb-1">
                       Stock (optional)
                     </label>
                     <input
@@ -173,14 +198,14 @@ const AddProduct = () => {
                       value={formData.stock}
                       onChange={handleChange}
                       min="0"
-                      className="p-2 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors"
+                      className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors"
                     />
                     <p className="mt-1 text-xs text-gray-400">Default 0 if left empty</p>
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="description" className="block text-xs font-medium text-gray-400 mb-1">
+                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
                     Description *
                   </label>
                   <textarea
@@ -189,7 +214,7 @@ const AddProduct = () => {
                     rows="3"
                     value={formData.description}
                     onChange={handleChange}
-                    className={`p-4 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors resize-none ${
+                    className={`block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors resize-none ${
                       errors.description ? 'border-red-500' : ''
                     }`}
                   />

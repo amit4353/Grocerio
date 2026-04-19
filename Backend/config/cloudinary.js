@@ -1,5 +1,5 @@
-const claudinary = require("cloudinary").v2
-const { claudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("cloudinary").v2
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -7,14 +7,25 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const storage = new claudinaryStorage({
-    claudinary,
-    params : {
-        folder : "grocerio/products",
-        allowed_formats: ["jpg", "jpeg", "png", "webp"],
-    transformation: [{ width: 800, height: 800, crop: "limit" }],
-    }
+const storage = new CloudinaryStorage({
+    cloudinary,
+    params: async (req, file) => {
+    return {
+      folder: "grocerio/products",
+      allowed_formats: ["jpg", "jpeg", "png", "webp"],
+      format : "webp",
+      transformation: [
+        {
+          width: 800,
+          height: 800,
+          crop: "limit",
+          quality : "auto:low",
+          fetch_format : "auto"
+        }
+      ],
+    };
+}
 })
 
 
-module.exports = { claudinary , storage };
+module.exports = { cloudinary , storage };

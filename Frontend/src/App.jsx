@@ -30,7 +30,7 @@ import Users from "./admin/pages/Users"
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
-  const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(false);
 
   useEffect(() => {
     loadCart();
