@@ -10,6 +10,11 @@ export const checkout = async () => {
     return res.data;
 }
 
+export const createRazorpayOrder = async () => {
+    const res = await protectedAPI.post("/orders/create-razorpay-order");
+    return res.data;
+}
+
 export const getUserOrders = async () => {
     const res = await protectedAPI.get("/orders");
     return res.data;

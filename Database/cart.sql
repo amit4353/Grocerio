@@ -9,4 +9,4 @@ CREATE TABLE cart(
     
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (product_id) REFERENCES products(id)
-)
+)s

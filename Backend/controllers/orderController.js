@@ -1,4 +1,70 @@
 const db = require("../config/db.js");
+const crypto = require("crypto");
+const Razorpay = require("razorpay");
+
+const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
+
+
+exports.createRazorpayOrder = (req, res) => {
+
+    const userId = req.user.id;
+
+    const cartQuery = `
+        SELECT cart.product_id,
+        cart.quantity,
+        products.price,
+        products.stock
+        FROM cart
+        JOIN products ON cart.product_id = products.id
+        WHERE cart.user_id = ?
+    `;
+
+    db.query(cartQuery, [userId], async (err, cartItems) => {
+
+        if (err) return res.status(500).json(err);
+
+        if (cartItems.length === 0) {
+            return res.status(400).json({
+                message: "Cart is empty"
+            });
+        }
+        let totalPrice = 0;
+
+        for (let item of cartItems) {
+
+            if (item.quantity > item.stock) {
+                return res.status(400).json({
+                    message: "Insufficient stock"
+                });
+            }
+
+            totalPrice += item.price * item.quantity;
+        }
+        try {
+            const options = {
+                amount: Math.round(totalPrice * 100),
+                currency: "INR",
+                receipt: `receipt_${Date.now()}`
+            };
+            const order = await razorpay.orders.create(options);
+            return res.status(200).json({
+                success: true,
+                order,
+                amount: totalPrice
+            });
+
+        } catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+    });
+};
 
 exports.checkout = (req, res) => {
     const userId = req.user.id;
@@ -303,3 +369,33 @@ exports.getAllOrders = (req, res) => {
 }
 
 
+
+exports.verifyPayment = (req, res) => {
+
+    const {
+        razorpay_order_id,
+        razorpay_payment_id,
+        razorpay_signature
+    } = req.body;
+
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+
+    const expectedSignature = crypto
+        .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+        .update(body.toString())
+        .digest("hex");
+
+    if (expectedSignature === razorpay_signature) {
+
+        return res.status(200).json({
+            success: true,
+            message: "Payment verified successfully"
+        });
+
+    }
+
+    return res.status(400).json({
+        success: false,
+        message: "Invalid payment signature"
+    });
+};

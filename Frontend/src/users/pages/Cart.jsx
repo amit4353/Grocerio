@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { getCart, removeFromCart, updateCartItem } from "../../services/cartServices";
-import { checkout } from "../../services/orderServices";
+import { createRazorpayOrder } from "../../services/orderServices";
 
 const Cart = ({ loadCart }) => {
   const navigate = useNavigate();
@@ -74,15 +74,38 @@ const Cart = ({ loadCart }) => {
   };
 
   const handleCheckout = async () => {
-    try {
-      const data = await checkout();
-      toast.success(data?.message);
-      navigate("/orders");
-      loadCart(); // refresh navbar cart count
-    } catch (err) {
-      toast.error(err?.response?.data?.message || "Failed to place order");
-    }
-  };
+  try {
+    const data = await createRazorpayOrder();
+
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: data.order.amount,
+      currency: data.order.currency,
+      name: "Grocerio",
+      description: "Test Payment",
+      order_id: data.order.id,
+
+      handler: async function (response) {
+        console.log("Payment Success:", response);
+
+        alert("Payment Successful!");
+
+        console.log(response);
+      },
+
+      theme: {
+        color: "#16a34a",
+      },
+    };
+
+    const razor = new window.Razorpay(options);
+    razor.open();
+
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to initiate payment");
+  }
+};
 
   // Calculate totals
   const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);

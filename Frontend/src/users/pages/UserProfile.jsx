@@ -76,7 +76,7 @@ const UserProfile = () => {
                 </div>
               </div>
               <button
-                onClick={() => navigate('/users/profile/edit')}
+                onClick={() => navigate('/users/update')}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white text-sm font-medium transition-colors"
               >
                 <Edit2 className="w-4 h-4" />
