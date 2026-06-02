@@ -15,6 +15,15 @@ export const createRazorpayOrder = async () => {
     return res.data;
 }
 
+export const verifyPayment = async (paymentData) => {
+    const res = await protectedAPI.post(
+        "/orders/verify-payment",
+        paymentData
+    );
+
+    return res.data;
+}
+
 export const getUserOrders = async () => {
     const res = await protectedAPI.get("/orders");
     return res.data;

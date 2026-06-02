@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getUserOrders, cancelOrder } from '../../services/orderServices';
 
+
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -96,11 +97,11 @@ const Orders = () => {
     }
   };
 
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50/50 to-white flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary-500 border-r-transparent"></div>
           <p className="mt-4 text-gray-500">Loading your orders...</p>
         </div>
       </div>

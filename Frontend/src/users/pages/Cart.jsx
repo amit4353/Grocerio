@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { getCart, removeFromCart, updateCartItem } from "../../services/cartServices";
-import { createRazorpayOrder } from "../../services/orderServices";
+import {
+  createRazorpayOrder,
+  verifyPayment,
+  checkout
+} from "../../services/orderServices";
 
 const Cart = ({ loadCart }) => {
   const navigate = useNavigate();
@@ -86,11 +90,34 @@ const Cart = ({ loadCart }) => {
       order_id: data.order.id,
 
       handler: async function (response) {
-        console.log("Payment Success:", response);
+        try {
 
-        alert("Payment Successful!");
+          console.log("Payment Success:", response);
 
-        console.log(response);
+          const verifyRes = await verifyPayment({
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+          });
+
+          console.log("Verify Response:", verifyRes);
+
+          toast.success("Payment Verified!");
+
+          await checkout();
+          loadCart();
+          navigate("/orders");
+          window.location.reload();
+        } catch (err) {
+
+          console.error("Verification Error:", err);
+
+          toast.error(
+            err?.response?.data?.message ||
+            "Payment verification failed"
+          );
+
+        }
       },
 
       theme: {
@@ -102,8 +129,11 @@ const Cart = ({ loadCart }) => {
     razor.open();
 
   } catch (err) {
+
     console.error(err);
+
     toast.error("Failed to initiate payment");
+
   }
 };
 
