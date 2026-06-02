@@ -4,9 +4,6 @@ const router = express.Router();
 const { getAllUsers, registerUser, loginUser, getUserProfile, updateUserProfile, updatePassword, logout } = require("../controllers/userController.js");
 const {isAuthenticated } = require("../middlewares/authMiddleware.js");
 
-
-
-
 // register user
 router.post("/register",registerUser);
 

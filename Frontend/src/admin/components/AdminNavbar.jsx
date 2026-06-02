@@ -13,7 +13,6 @@ const AdminNavbar = ({ toggleSidebar, isDesktop }) => {
   const profileRef = useRef(null);
   const navigate = useNavigate();
 
-  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (notifRef.current && !notifRef.current.contains(event.target)) {
@@ -33,14 +32,13 @@ const AdminNavbar = ({ toggleSidebar, isDesktop }) => {
     { id: 3, text: 'User john@example.com registered', time: '1 hour ago' },
   ];
 
-const handleLogout = async () => {
+  const handleLogout = async () => {
     try{
-        const res = await logoutUser()
-        toast.success(res?.message);
-        navigate('/users/login');
-
-    } catch(err){
-        toast.error(err?.response?.data?.message || "Something went wrong");
+      const res = await logoutUser()
+      toast.success(res?.message);
+      navigate('/users/login');
+    }catch(err){
+      toast.error(err?.response?.data?.message || "Something went wrong");
     }
   };
 
@@ -52,13 +50,11 @@ const handleLogout = async () => {
   return (
     <nav className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
-        {/* Left: Hamburger + Dashboard Title */}
         <div className="flex items-center gap-3">
           {!isDesktop && (
             <button
               onClick={toggleSidebar}
-              className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
-            >
+              className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500">
               <Menu className="h-5 w-5" />
             </button>
           )}
@@ -70,31 +66,22 @@ const handleLogout = async () => {
                   ? 'text-primary-600'
                   : 'text-gray-800 hover:text-primary-600'
               }`
-            }
-          >
+            }>
             Dashboard
           </NavLink>
         </div>
 
-        {/* Center: Search (desktop) */}
         <div className="hidden md:block flex-1 max-w-md mx-4">
           <div
             className={`relative transition-all duration-300 ${
               searchFocused ? 'scale-[1.02]' : ''
             }`}
           >
-            
           </div>
         </div>
 
-        {/* Right: Icons & Profile */}
         <div className="flex items-center gap-2">
-          {/* Dark mode toggle (placeholder) */}
-          {/* <button className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-all duration-200">
-            <Moon className="h-5 w-5" />
-          </button> */}
 
-          {/* Notifications */}
           <div className="relative" ref={notifRef}>
             <button
               onClick={() => setNotifOpen(!notifOpen)}

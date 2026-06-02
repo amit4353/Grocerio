@@ -29,11 +29,9 @@
   --gradient-hero: linear-gradient(135deg, #ecfdf5 0%, #fff7ed 100%);
   --gradient-card: linear-gradient(145deg, #ffffff, #f9fafb);
 
-  /* Spacing (optional fine‑tuning) */
   --spacing-section: 5rem;
 }
 
-/* Base styles */
 body {
   @apply antialiased text-gray-800;
   font-feature-settings: "ss01", "ss02", "cv01", "cv02";
@@ -52,10 +50,6 @@ body {
   @apply transition-all duration-200;
 }
 
-/* Focus rings (accessible) */
-/* *:focus-visible {
-  @apply outline-none ring-2 ring-accent-500 ring-offset-2;
-} */
 
 
 @keyframes blob {

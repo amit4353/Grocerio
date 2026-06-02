@@ -52,7 +52,7 @@ const Users = () => {
       try {
         await deleteUser(id);
         toast.success('User deleted successfully');
-        fetchUsers(); // refresh
+        fetchUsers();
       } catch (err) {
         toast.error(err.response?.data?.message || 'Failed to delete user');
       }

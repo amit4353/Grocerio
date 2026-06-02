@@ -1,7 +1,6 @@
 import API from "../utils/api";
 import protectedAPI from "../utils/protectedApi";
 
-
 export const loginUser = async (data) => {
     const res = await API.post("/users/login", data);
     return res.data;
@@ -18,7 +17,3 @@ export const logoutUser = async () => {
     localStorage.removeItem("user");
     return res.data;
 }
-
-
-
-

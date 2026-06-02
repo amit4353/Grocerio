@@ -24,16 +24,12 @@ const Sidebar = ({
 
   const isActive = (path) => location.pathname === path;
 
-  // Main navigation items (excluding Dashboard and Settings)
   const mainItems = [
-    // Dashboard removed as requested
-    { icon: ShoppingCart, label: 'Orders', path: null, hasSubmenu: true }, // Orders with submenu
+    { icon: ShoppingCart, label: 'Orders', path: null, hasSubmenu: true },
     { icon: Users, label: 'Users', path: '/admin/users' },
     { icon: CreditCard, label: 'Payments', path: '/admin/payments' },
-    // Settings moved to bottom, so removed from here
   ];
 
-  // Products submenu (already present)
   const productSubmenu = {
     label: 'Products',
     icon: Package,
@@ -43,7 +39,6 @@ const Sidebar = ({
     ],
   };
 
-  // Orders submenu (new)
   const ordersSubmenu = {
     label: 'Orders',
     icon: ShoppingCart,
@@ -141,7 +136,6 @@ const Sidebar = ({
             G
           </div>
         )}
-        {/* Collapse toggle only on desktop */}
         {isDesktop && !isMobile && (
           <button
             onClick={onToggleCollapse}
@@ -158,9 +152,7 @@ const Sidebar = ({
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-        {/* Products submenu (already present) */}
         {renderSubmenu(productSubmenu)}
-        {/* Orders submenu (new) */}
         {renderSubmenu(ordersSubmenu)}
         {/* Users */}
         <button
@@ -198,7 +190,6 @@ const Sidebar = ({
         </button>
       </nav>
 
-      {/* Bottom Section: Settings (replaces Logout) */}
       <div className="border-t border-gray-200 p-3">
         <button
           onClick={() => handleNav('/admin/settings')}
@@ -220,7 +211,7 @@ const Sidebar = ({
     </div>
   );
 
-  // Desktop sidebar: always visible
+  // Desktop sidebar always visible
   if (!isMobile) {
     return (
       <aside
@@ -233,7 +224,7 @@ const Sidebar = ({
     );
   }
 
-  // Mobile sidebar: slide-in
+  // Mobile sidebar slide-in
   return (
     <>
       {/* Overlay */}

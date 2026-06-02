@@ -20,7 +20,7 @@ const PageNotFound = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center px-4 overflow-hidden relative">
-      {/* Animated floating grocery icons */}
+
       <div className="absolute top-10 left-5 text-6xl animate-float-slow opacity-30">
         🥑
       </div>

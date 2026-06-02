@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getOrderById } from '../../services/orderServices'; // adjust import
+import { getOrderById } from '../../services/orderServices';
 
 const OrderDetails = () => {
   const { id } = useParams();
@@ -17,8 +17,7 @@ const OrderDetails = () => {
   const fetchOrderDetails = async () => {
     setLoading(true);
     try {
-      const data = await getOrderById(id); // returns array of order items
-      // Group by order_id – but it's a single order, so just store the first item's common fields
+      const data = await getOrderById(id);
       console.log("Data" , data);
       if (data && data.length > 0) {
         const orderInfo = {

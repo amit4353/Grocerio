@@ -25,7 +25,6 @@ const Navbar = ({ cartItemCount = 0 }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Sync search input with current URL query (for when user navigates back)
   useEffect(() => {
     const query = searchParams.get('search') || '';
     setSearchValue(query);
@@ -68,7 +67,6 @@ const Navbar = ({ cartItemCount = 0 }) => {
     <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/10 border-b border-white/20 shadow-sm rounded-b-xl">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Left: Logo */}
           <div className="flex-shrink-0">
             <Link to="/" onClick={() => {
               navigate("/")
@@ -86,7 +84,7 @@ const Navbar = ({ cartItemCount = 0 }) => {
                 <Search className="h-5 w-5 text-gray-400" />
               </span>
               <input
-                type="search"
+                type="text"
                 placeholder="Search groceries..."
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
@@ -281,7 +279,6 @@ const Navbar = ({ cartItemCount = 0 }) => {
   );
 };
 
-// Desktop nav link using React Router Link
 const NavLink = ({ to, children, className = '' }) => (
   <Link
     to={to}
@@ -291,7 +288,6 @@ const NavLink = ({ to, children, className = '' }) => (
   </Link>
 );
 
-// Mobile nav link using React Router Link
 const MobileNavLink = ({ to, children, onClick, className = '' }) => (
   <Link
     to={to}

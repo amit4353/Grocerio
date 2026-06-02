@@ -38,6 +38,25 @@ const ProductDetails = ({ loadCart }) => {
     }
   };
 
+  const handleBuyNow = async () => {
+  try {
+    await addToCart({
+      product_id: id,
+      quantity: qty,
+    });
+
+    loadCart();
+
+    navigate("/cart");
+
+  } catch (err) {
+    toast.error(
+      err?.response?.data?.message ||
+      "Something went wrong"
+    );
+  }
+};
+
   // Loading state
   if (loading) {
     return (
@@ -75,7 +94,7 @@ const ProductDetails = ({ loadCart }) => {
   }
 
   const total = (qty * parseFloat(product.price)).toFixed(0);
-  const maxQty = product.stock || 0; // fallback to 0 if stock missing
+  const maxQty = product.stock || 0;
 
   // Quantity handlers with stock limit
   const increaseQty = () => {
@@ -156,7 +175,7 @@ const ProductDetails = ({ loadCart }) => {
             <p className="text-xs text-gray-400 uppercase tracking-widest mb-2">About this product</p>
             <p className="text-sm text-gray-600 leading-relaxed mb-6">{product.description}</p>
 
-            {/* Meta Information - Updated with stock */}
+            {/* Meta Information */}
             <div className="grid grid-cols-2 gap-3 mb-6">
               <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-3 shadow-sm">
                 <p className="text-xs text-gray-400 mb-1">Brand</p>
@@ -180,7 +199,7 @@ const ProductDetails = ({ loadCart }) => {
               </div>
             </div>
 
-            {/* Quantity Selector - with stock limit */}
+            {/* Quantity Selector */}
             <div className="flex items-center gap-4 mb-6">
               <span className="text-sm text-gray-600 font-medium">Quantity</span>
               <div className="flex items-center border border-gray-200 rounded-full bg-white shadow-sm">
@@ -223,6 +242,7 @@ const ProductDetails = ({ loadCart }) => {
                 {maxQty === 0 ? 'Out of Stock' : 'Add to Cart'}
               </button>
               <button
+                onClick={handleBuyNow}
                 className={`flex-1 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white text-sm font-medium py-3 rounded-xl shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-300 ${
                   maxQty === 0 ? 'opacity-50 cursor-not-allowed' : ''
                 }`}

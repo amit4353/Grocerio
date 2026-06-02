@@ -1,7 +1,6 @@
 const db = require("../config/db.js");
 const cloudinary = require("../config/cloudinary.js");
 
-
 exports.getProducts = (req,res) => {
     try{
         const sql = "SELECT * FROM products";
@@ -11,7 +10,6 @@ exports.getProducts = (req,res) => {
             }
             res.json(result);
         })
-        
     } catch(err){
         return res.status(500).json({
             message : "Internal Server Error"
@@ -47,7 +45,6 @@ exports.getProductsById = (req,res) => {
 exports.createProduct = (req, res) => {
     
     try {
-
         console.log("BODY:", req.body);
         console.log("FILE:", req.file);
         
@@ -82,7 +79,6 @@ exports.createProduct = (req, res) => {
             })
         })
 
-
     } catch (err) {
         return res.status(500).json({
             message : "Internal Server Error"
@@ -90,12 +86,9 @@ exports.createProduct = (req, res) => {
     }
 }
 
-
 exports.updateProduct = (req, res) => {
     const { id } = req.params;
-
     db.query("SELECT * FROM products WHERE id=?", [id], async (err, product) => {
-
         if(err) return res.status(500).json(err);
 
         if(product.length === 0){
@@ -121,7 +114,6 @@ exports.updateProduct = (req, res) => {
         }
 
         const {name , brand, price, description, stock } = req.body;
-        
         
         const sql = `UPDATE products SET
             name = COALESCE(?, name),
@@ -186,4 +178,3 @@ exports.deleteProduct = (req, res) => {
         })
     })
 }
-

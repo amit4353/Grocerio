@@ -7,12 +7,8 @@ const razorpay = new Razorpay({
     key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-
-
 exports.createRazorpayOrder = (req, res) => {
-
     const userId = req.user.id;
-
     const cartQuery = `
         SELECT cart.product_id,
         cart.quantity,
@@ -110,23 +106,14 @@ exports.checkout = (req, res) => {
                 item.price
             ]);
 
-
             db.query("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ?", [value], (err, result) => {
                 if(err) return res.status(500).json(err);
 
-
                 let i = 0;
-
                 function updateStock() {
-
-
                     if(i === cartItems.length){
-
-
                         db.query("DELETE FROM cart WHERE user_id = ?", [userId], (err, deletedData) => {
                             if(err) return res.status(500).json(err);
-
-
                             return res.json({
                                 message: "Order placed successfully",
                                 orderId,
@@ -135,7 +122,6 @@ exports.checkout = (req, res) => {
                         });
                         return;
                     }
-
                     const item = cartItems[i]; // current item
 
                     db.query("UPDATE products SET stock = stock - ? WHERE id = ?",
@@ -147,13 +133,11 @@ exports.checkout = (req, res) => {
                         }
                     );
                 }
-
                 updateStock();
             });
         });
     });
 };
-
 
 // get all orders of users
 exports.getUserOrders = (req, res) => {
@@ -263,7 +247,6 @@ exports.cancelOrder = (req, res) => {
                             message: "Order cancelled successfully!"
                         });
                     }
-
                     const item = items[i];
 
                     db.query("UPDATE products SET stock = stock + ? WHERE id = ?",
@@ -280,7 +263,6 @@ exports.cancelOrder = (req, res) => {
         });
     });
 };
-
 
 // Update user order status by admin
 exports.updateOrderStatus = (req, res) => {
@@ -322,7 +304,6 @@ exports.updateOrderStatus = (req, res) => {
             })
         }
 
-
         db.query("UPDATE orders SET status = ? WHERE id = ? ", [status, orderId], (err) => {
             if(err) return res.status(500).json(err);
             return res.status(200).json({
@@ -331,7 +312,6 @@ exports.updateOrderStatus = (req, res) => {
         })
     })
 }
-
 
 exports.getAllOrders = (req, res) => {
 
@@ -368,8 +348,6 @@ exports.getAllOrders = (req, res) => {
     })
 }
 
-
-
 exports.verifyPayment = (req, res) => {
 
     const {
@@ -391,7 +369,6 @@ exports.verifyPayment = (req, res) => {
             success: true,
             message: "Payment verified successfully"
         });
-
     }
 
     return res.status(400).json({

@@ -46,22 +46,20 @@ const Cart = ({ loadCart }) => {
   const handleRemoveCart = async (id) => {
     try {
       const data = await removeFromCart(id);
-      await loadCartItems(); // refresh list
-      loadCart(); // refresh navbar cart count
+      await loadCartItems();
+      loadCart();
       toast.success(data.message);
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to remove item");
     }
   };
 
-  // Update quantity with stock validation
   const handleUpdateCart = async (itemId, newQuantity) => {
     const item = cart.find((i) => i.id === itemId);
     if (!item) return;
 
     if (newQuantity < 1) return;
 
-    // Check if requested quantity exceeds available stock
     if (newQuantity > item.stock) {
       toast.error(`Only ${item.stock} items available in stock`);
       return;
@@ -69,9 +67,7 @@ const Cart = ({ loadCart }) => {
 
     try {
       const data = await updateCartItem(itemId, newQuantity);
-      await loadCartItems(); // refresh list
-      // Optionally show success message
-      // toast.success(data.message);
+      await loadCartItems();
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to update quantity");
     }
@@ -178,7 +174,6 @@ const Cart = ({ loadCart }) => {
     );
   }
 
-  // Main cart
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 bg-gradient-to-b from-gray-50/50 to-white min-h-screen">
       <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8">Your Cart</h1>

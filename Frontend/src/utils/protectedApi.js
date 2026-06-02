@@ -29,5 +29,3 @@ protectedAPI.interceptors.response.use((response) => response, (error) => {
 })
 
 export default protectedAPI;
-
-

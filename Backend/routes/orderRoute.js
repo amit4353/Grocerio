@@ -13,7 +13,6 @@ const { isAuthenticated } = require("../middlewares/authMiddleware.js");
 const { isAdmin } = require("../middlewares/admin.js");
 const router = express.Router();
 
-
 // order items
 router.post("/checkout",isAuthenticated, checkout);
 

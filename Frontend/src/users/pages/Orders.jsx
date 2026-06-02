@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getUserOrders, cancelOrder } from '../../services/orderServices';
 
-
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,7 +39,7 @@ const Orders = () => {
         });
       });
       const ordersArray = Array.from(ordersMap.values());
-      // Latest first (assuming id is sequential and higher means newer)
+
       ordersArray.sort((a, b) => b.id - a.id);
       setOrders(ordersArray);
     } catch (err) {
@@ -96,7 +95,6 @@ const Orders = () => {
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
-
 
   if (loading) {
     return (
@@ -174,7 +172,7 @@ const Orders = () => {
                   <div className="space-y-4">
                     {order.items.map((item, idx) => (
                       <div key={idx} className="flex items-center gap-4">
-                        {/* Placeholder image – in real use you'd have item.image */}
+
                         <div className="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
                           <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 text-xs">
                             <img src={item.image} alt={item.name} />

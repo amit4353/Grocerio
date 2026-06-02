@@ -30,11 +30,8 @@ const RecentOrders = () => {
             email: row.email,
           });
         }
-        // No need to store items for this widget, we just need the order summary
       });
       const ordersArray = Array.from(ordersMap.values());
-      // Latest first (assuming backend already sorted by created_at desc)
-      // but if not, we sort by id descending (latest order_id highest)
       ordersArray.sort((a, b) => b.id - a.id);
       // Take first 5
       setOrders(ordersArray.slice(0, 5));

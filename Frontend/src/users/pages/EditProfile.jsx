@@ -14,7 +14,6 @@ const EditProfile = () => {
     address: '',
   });
 
-  // Refs for cursor positioning
   const nameRef = useRef(null);
   const phoneRef = useRef(null);
   const addressRef = useRef(null);
@@ -41,16 +40,13 @@ const EditProfile = () => {
     fetchProfile();
   }, [navigate]);
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Move cursor to end of text on focus
   const handleFocus = (e) => {
     const input = e.target;
-    // setTimeout ensures the focus event is fully processed
     setTimeout(() => {
       if (input.setSelectionRange) {
         input.setSelectionRange(input.value.length, input.value.length);
@@ -58,10 +54,8 @@ const EditProfile = () => {
     }, 0);
   };
 
-  // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Basic validation
     if (!formData.name.trim()) {
       toast.error('Name is required');
       return;

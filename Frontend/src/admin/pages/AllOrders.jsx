@@ -13,7 +13,6 @@ const AllOrders = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    
     fetchOrders();
   }, []);
 
@@ -40,11 +39,9 @@ const AllOrders = () => {
           quantity: row.quantity,
           price: row.price,
         });
-        // Optionally recalc total if needed
         // order.total_price = order.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
       });
       const ordersArray = Array.from(ordersMap.values());
-      // Sort latest first (assuming order_id is sequential)
       ordersArray.sort((a, b) => b.id - a.id);
       setOrders(ordersArray);
       setFilteredOrders(ordersArray);
@@ -59,7 +56,6 @@ const AllOrders = () => {
     try {
       await updateOrderStatus(orderId, newStatus);
       toast.success('Order status updated');
-      // Refresh orders to reflect change
       fetchOrders();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to update status');

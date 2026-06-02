@@ -27,10 +27,16 @@ import UserOrders from "./admin/pages/UserOrders"
 import RecentOrders from "./admin/pages/RecentOrders"
 import CancelledOrders from "./admin/pages/CancelledOrders"
 import Users from "./admin/pages/Users"
+import { useLocation } from "react-router-dom";
+
 
 function App() {
+  const location = useLocation();
   const [cartItems, setCartItems] = useState([]);
-  const [showIntro, setShowIntro] = useState(false);
+  const [showIntro, setShowIntro] = useState(
+    location.pathname === "/" &&
+    !sessionStorage.getItem("introShown")
+  );
 
   useEffect(() => {
     loadCart();
@@ -46,12 +52,17 @@ function App() {
     <>
       <Toaster position="bottom-right" toastOptions={{
         style: {
-          marginBottom: "50px",   // niche shift
-          marginRight: "50px"     // right se thoda gap
+          marginBottom: "50px",
+          marginRight: "50px"
         }
       }}/>
       {showIntro ? (
-        <LandingIntro onComplete={() => setShowIntro(false)} />
+        <LandingIntro
+          onComplete={() => {
+            sessionStorage.setItem("introShown", "true");
+            setShowIntro(false);
+          }}
+        />
       ) : (
         <>
           <Routes>

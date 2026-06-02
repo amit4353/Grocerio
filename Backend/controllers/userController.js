@@ -2,7 +2,6 @@ const db = require("../config/db.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-
 //Register new user;
 exports.registerUser = async (req,res) => {
     try{
@@ -62,7 +61,6 @@ exports.loginUser = async (req,res) => {
                     message : "User Not Found!"
                 })
             }
-
             const user = result[0];
 
             // compare password
@@ -86,12 +84,7 @@ exports.loginUser = async (req,res) => {
                 secure: false
             });
 
-
             const isAdmin = (user.email === process.env.ADMIN_EMAIL);
-            // console.log("DB email:", user.email);
-            // console.log("ENV email:", process.env.ADMIN_EMAIL);
-            // console.log("Match:", user.email === process.env.ADMIN_EMAIL);
-
 
             res.json({
                 message : "Login Successfully ",
@@ -104,7 +97,6 @@ exports.loginUser = async (req,res) => {
                 }
             });
         });
-
 
     } catch (err){
         res.status(500).json({
@@ -153,7 +145,6 @@ exports.deleteUser = (req,res) => {
                 message : "Please provide ID"
             })
         }
-
         db.query("DELETE FROM users WHERE id = ?" , [userId] , (err,res) => {
 
         })
@@ -191,7 +182,6 @@ exports.getUserProfile = (req, res) => {
             console.log("user : ",user[0]);
             res.status(200).json(user[0]);
         })
-
 
     } catch (err){
         res.status(500).json({
@@ -274,14 +264,12 @@ exports.updatePassword = (req, res) => {
                 oldPassword : oldPassword
             })
         }
-
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
         db.query("UPDATE users SET password = ? WHERE id = ?", [hashedPassword, userId], (err,result) => {
             if(err){
                 return res.status(500).json(err);
             }
-
             res.status(200).json({
                 message : "Password Updated successfully"
             })

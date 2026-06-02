@@ -50,7 +50,6 @@ const Products = () => {
     return (
       <div className="flex items-center justify-center py-20">
         <div className="text-center">
-          {/* <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary-500 border-r-transparent"></div> */}
           <p className="mt-4 text-gray-500">Loading products...</p>
         </div>
       </div>
@@ -58,7 +57,6 @@ const Products = () => {
   }
 
   return (
-
     <div className="px-4 py-6 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>

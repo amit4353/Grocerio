@@ -9,7 +9,6 @@ export const AuthProvider = ({ children }) => {
         if(savedUser) {
             return JSON.parse(savedUser);
         }
-
         return null;
     });
     

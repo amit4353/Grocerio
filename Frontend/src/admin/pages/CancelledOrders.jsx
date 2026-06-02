@@ -14,7 +14,7 @@ const CancelledOrders = () => {
   const fetchCancelledOrders = async () => {
     setLoading(true);
     try {
-      const data = await getAllOrders(); // array of rows
+      const data = await getAllOrders();
       // Group by order_id
       const ordersMap = new Map();
       data.orders.forEach((row) => {

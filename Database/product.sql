@@ -8,5 +8,3 @@ CREATE TABLE products(
     description TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
-
-

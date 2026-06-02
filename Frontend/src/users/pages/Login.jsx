@@ -14,7 +14,6 @@ const Login = () => {
   },[]);
 
   const navigate = useNavigate();
-
   const { login } = useAuth();
 
   const handleSubmit = async (e) => {
@@ -25,7 +24,6 @@ const Login = () => {
         email,
         password,
       });
-
 
       localStorage.setItem('token', res.token);
       login(res.user);
@@ -39,7 +37,6 @@ const Login = () => {
       } else{
         navigate("/");
       }
-
 
     } catch (err) {
       toast.error(err.response?.data?.message || 'Something went wrong!', {
