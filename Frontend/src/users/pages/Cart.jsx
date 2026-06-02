@@ -87,16 +87,11 @@ const Cart = ({ loadCart }) => {
 
       handler: async function (response) {
         try {
-
-          console.log("Payment Success:", response);
-
           const verifyRes = await verifyPayment({
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature,
           });
-
-          console.log("Verify Response:", verifyRes);
 
           toast.success("Payment Verified!");
 

@@ -178,8 +178,6 @@ exports.getUserProfile = (req, res) => {
                     message : "User not found"
                 })
             }
-
-            console.log("user : ",user[0]);
             res.status(200).json(user[0]);
         })
 

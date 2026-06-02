@@ -18,7 +18,6 @@ const OrderDetails = () => {
     setLoading(true);
     try {
       const data = await getOrderById(id);
-      console.log("Data" , data);
       if (data && data.length > 0) {
         const orderInfo = {
           id: data[0].order_id,

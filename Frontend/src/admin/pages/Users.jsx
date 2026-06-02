@@ -19,7 +19,6 @@ const Users = () => {
     setLoading(true);
     try {
       const data = await getAllUsers();
-      console.log(" user data" , data);
       setUsers(data);
       setFilteredUsers(data);
     } catch (err) {
