@@ -1,5 +1,26 @@
 {
   "dependencies": {
-    "razorpay": "^2.9.6"
-  }
+    "concurrently": "^10.0.3"
+  },
+  "name": "grocerio",
+  "version": "1.0.0",
+  "description": "Grocerio is a full‑stack e‑commerce web application for grocery shopping. Users can browse products, add them to cart, place orders, and manage their order history. The app features a modern, responsive UI with real‑time order status updates.",
+  "main": "index.js",
+  "scripts": {
+    "frontend": "cd Frontend && pnpm run dev",
+    "backend": "cd Backend && nodemon server.js",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amit4353/Grocerio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/amit4353/Grocerio/issues"
+  },
+  "homepage": "https://github.com/amit4353/Grocerio#readme"
 }
