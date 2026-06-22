@@ -12,8 +12,13 @@ export const registerUser = async (data) => {
 }
 
 export const logoutUser = async () => {
-    const res = await protectedAPI.post("/users/logout");
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    return res.data;
+    try {
+        const res = await protectedAPI.post("/users/logout");
+        return res.data;
+    } catch (err) {
+        console.log(err);
+    } finally {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+    }
 }
