@@ -4,9 +4,23 @@ const cors = require("cors");
 const app = express();
 require("dotenv").config();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://grocerio-k71qvuhim-amit-prajapati-s-projects.vercel.app",
+  "https://grocerio-beryl.vercel.app",
+];
+
+
 app.use(
   cors({
-    origin: true,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
