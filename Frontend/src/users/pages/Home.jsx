@@ -7,9 +7,6 @@ import toast from 'react-hot-toast';
 const Home = ({ loadCart }) => {
   const [products, setProducts] = useState([]);
   const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
-  const [showSignCard, setShowSignCard] = useState(false);
-  const [signName, setSignName] = useState('');
-  const [signEmail, setSignEmail] = useState('');
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
@@ -27,20 +24,6 @@ const Home = ({ loadCart }) => {
       }, 100);
     }
   }, [searchQuery]);
-
-  useEffect(() => {
-    loadProducts();
-    window.scrollTo(0, 0);
-    
-    // Show sign card on mobile after 3 seconds
-    const timer = setTimeout(() => {
-      if (window.innerWidth < 768) {
-        setShowSignCard(true);
-      }
-    }, 3000);
-    
-    return () => clearTimeout(timer);
-  }, []);
 
   const loadProducts = async () => {
     const data = await getProducts();
@@ -88,82 +71,8 @@ const Home = ({ loadCart }) => {
     }
   };
 
-  const handleSignSubmit = (e) => {
-    e.preventDefault();
-    if (signName && signEmail) {
-      toast.success(`Welcome ${signName}! Thanks for signing up!`);
-      setShowSignCard(false);
-      setSignName('');
-      setSignEmail('');
-    } else {
-      toast.error('Please fill all fields');
-    }
-  };
-
   return (
     <main className="animate-fadeIn">
-      {/* Mobile Sign Card */}
-      {showSignCard && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
-          <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
-            <button
-              onClick={() => setShowSignCard(false)}
-              className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
-            >
-              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            
-            <div className="p-6">
-              <div className="text-center mb-6">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full flex items-center justify-center">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">Join Grocerio</h3>
-                <p className="text-gray-500 text-sm">Get exclusive offers and fresh updates!</p>
-              </div>
-              
-              <form onSubmit={handleSignSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
-                  <input
-                    type="text"
-                    value={signName}
-                    onChange={(e) => setSignName(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-                    placeholder="Enter your name"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                  <input
-                    type="email"
-                    value={signEmail}
-                    onChange={(e) => setSignEmail(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-                    placeholder="Enter your email"
-                    required
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full py-3 rounded-lg bg-gradient-to-r from-primary-500 to-primary-600 text-white font-medium hover:from-primary-600 hover:to-primary-700 transform hover:scale-[1.02] transition-all duration-200"
-                >
-                  Sign Up Now
-                </button>
-              </form>
-              
-              <p className="text-xs text-center text-gray-400 mt-4">
-                By signing up, you agree to our Terms & Conditions
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-hero py-12 md:py-20 lg:py-28">
@@ -416,64 +325,6 @@ const Home = ({ loadCart }) => {
           </form>
         </div>
       </section>
-
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-        .animate-float {
-          animation: float 15s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-        
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.8s ease-out forwards;
-        }
-        
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-fadeInUp {
-          animation: fadeInUp 0.6s ease-out forwards;
-        }
-        
-        .animation-delay-100 { animation-delay: 0.1s; }
-        .animation-delay-200 { animation-delay: 0.2s; }
-        .animation-delay-300 { animation-delay: 0.3s; }
-        .animation-delay-400 { animation-delay: 0.4s; }
-        .animation-delay-500 { animation-delay: 0.5s; }
-        .animation-delay-600 { animation-delay: 0.6s; }
-        .animation-delay-700 { animation-delay: 0.7s; }
-        .animation-delay-800 { animation-delay: 0.8s; }
-        .animation-delay-900 { animation-delay: 0.9s; }
-        
-        /* Hide scrollbar for carousel */
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </main>
   );
 };
