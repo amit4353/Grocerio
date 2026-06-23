@@ -6,7 +6,9 @@ require("dotenv").config();
 
 const allowedOrigins = [
   "http://localhost:5173",
+  "http://localhost:5174",
   "https://grocerio-beryl.vercel.app",
+  "https://grocerio-he93tcs5f-amit-prajapati-s-projects.vercel.app",
 ];
 
 app.use(
