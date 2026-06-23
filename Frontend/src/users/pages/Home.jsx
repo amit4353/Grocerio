@@ -71,6 +71,11 @@ const Home = ({ loadCart }) => {
     }
   };
 
+    useEffect(() => {
+      loadProducts();
+      window.scrollTo(0, 0);
+    }, []);
+
   return (
     <main className="animate-fadeIn">
 
