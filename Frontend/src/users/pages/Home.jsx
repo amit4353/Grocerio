@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 
 const Home = ({ loadCart }) => {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
   const navigate = useNavigate();
 
@@ -26,8 +27,17 @@ const Home = ({ loadCart }) => {
   }, [searchQuery]);
 
   const loadProducts = async () => {
-    const data = await getProducts();
-    setProducts(data);
+    try {
+      setLoading(true);
+
+      const data = await getProducts();
+
+      setProducts(data || []);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const filteredProducts = products.filter((product) => {
@@ -255,9 +265,28 @@ const Home = ({ loadCart }) => {
             </span>
           </div>
 
-          {filteredProducts.length === 0 ? (
-            <p className="text-center text-gray-500 animate-fadeInUp">No products available.</p>
-          ) : (
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
+              {[...Array(8)].map((_, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-2xl shadow-md p-4 animate-pulse"
+                >
+                  <div className="h-40 bg-gray-200 rounded-xl"></div>
+
+                  <div className="h-4 bg-gray-200 rounded mt-4"></div>
+
+                  <div className="h-4 bg-gray-200 rounded mt-2 w-2/3"></div>
+
+                  <div className="h-8 bg-gray-200 rounded mt-4"></div>
+                </div>
+              ))}
+            </div>
+            ) : filteredProducts.length === 0 ? (
+              <p className="text-center text-gray-500 animate-fadeInUp">
+                No products found
+              </p>
+            ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
               {filteredProducts.map((product, index) => (
                 <div
